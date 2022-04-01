@@ -7799,6 +7799,11 @@
     getNextHandle() {
       return this.handle++;
     }
+
+    onDisconnected() {
+      connect().then();
+    }
+    
     async init() {
       this.device = await navigator.bluetooth.requestDevice({
         filters: [
@@ -7834,10 +7839,6 @@
       catch {
         connect.then();
       }
-    }
-
-    onDisconnected() {
-      connect().then();
     }
 
     async authenticate() {
