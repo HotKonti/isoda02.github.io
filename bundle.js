@@ -7836,7 +7836,7 @@
       }
     }
 
-    async onDisconnected() {
+    onDisconnected() {
       connect().then();
     }
 
