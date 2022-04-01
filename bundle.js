@@ -7801,7 +7801,7 @@
     }
 
     onDisconnected() {
-      connect().then();
+      this.connect().then();
     }
     
     async init() {
@@ -7815,8 +7815,8 @@
       });
       window.dispatchEvent(new CustomEvent("connected"));
       await this.device.gatt.disconnect();
-      this.device.addEventListener('gattserverdisconnected', onDisconnected);
-      await connect();
+      this.device.addEventListener('gattserverdisconnected', this.onDisconnected);
+      await this.connect();
     }
 
     async connect() {
@@ -7837,7 +7837,7 @@
         await this.authenticate();
       }
       catch {
-        connect.then();
+        this.connect.then();
       }
     }
 
