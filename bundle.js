@@ -7850,7 +7850,7 @@
         clearTimeout(this.disconnectedTimeout);
         this.disconnectedTimeout = undefined;
       }
-      this.disconnectedTimeout = setTimeout(athis.connect);
+      this.disconnectedTimeout = setTimeout(this.connect);
     }
 
     async authenticate() {
