@@ -7815,29 +7815,42 @@
     }
 
     async connect() {
-      try {
-        const server = await this.device.gatt.connect();
-        console.log("Connected through gatt");
-        this.services.miband1 = await server.getPrimaryService(UUIDS.miband1);
-        this.services.miband2 = await server.getPrimaryService(UUIDS.miband2);
-        this.services.heartrate = await server.getPrimaryService(UUIDS.heartrate);
-        console.log("Services initialized");
-        this.chars.auth = await this.services.miband2.getCharacteristic(CHAR_UUIDS.auth);
-        this.chars.chunkedWrite = await this.services.miband1.getCharacteristic(CHAR_UUIDS.chunked_transfer_2021_write);
-        this.chars.chunkedRead = await this.services.miband1.getCharacteristic(CHAR_UUIDS.chunked_transfer_2021_read);
-        this.chars.hrControl = await this.services.heartrate.getCharacteristic(CHAR_UUIDS.heartrate_control);
-        this.chars.hrMeasure = await this.services.heartrate.getCharacteristic(CHAR_UUIDS.heartrate_measure);
-        this.chars.sensor = await this.services.miband1.getCharacteristic(CHAR_UUIDS.sensor);
-        console.log("Characteristics initialized");
-        await this.authenticate();
-      }
-      catch {
-        this.connect().then();
+      while(true)
+      {
+        try {
+          const server = await this.device.gatt.connect();
+          console.log("Connected through gatt");
+          this.services.miband1 = await server.getPrimaryService(UUIDS.miband1);
+          this.services.miband2 = await server.getPrimaryService(UUIDS.miband2);
+          this.services.heartrate = await server.getPrimaryService(UUIDS.heartrate);
+          console.log("Services initialized");
+          this.chars.auth = await this.services.miband2.getCharacteristic(CHAR_UUIDS.auth);
+          this.chars.chunkedWrite = await this.services.miband1.getCharacteristic(CHAR_UUIDS.chunked_transfer_2021_write);
+          this.chars.chunkedRead = await this.services.miband1.getCharacteristic(CHAR_UUIDS.chunked_transfer_2021_read);
+          this.chars.hrControl = await this.services.heartrate.getCharacteristic(CHAR_UUIDS.heartrate_control);
+          this.chars.hrMeasure = await this.services.heartrate.getCharacteristic(CHAR_UUIDS.heartrate_measure);
+          this.chars.sensor = await this.services.miband1.getCharacteristic(CHAR_UUIDS.sensor);
+          console.log("Characteristics initialized");
+          await this.authenticate();
+          if (this.disconnectedTimeout !== undefined)
+          {
+            clearTimeout(this.disconnectedTimeout);
+            this.disconnectedTimeout = undefined;
+          }
+          break;
+        }
+        catch { }
       }
     }
 
     onDisconnected() {
-      this.connect().then();
+      console.log("on disconnected. retry connect");
+      if (this.disconnectedTimeout !== undefined)
+      {
+        clearTimeout(this.disconnectedTimeout);
+        this.disconnectedTimeout = undefined;
+      }
+      this.disconnectedTimeout = setTimeout(athis.connect);
     }
 
     async authenticate() {
